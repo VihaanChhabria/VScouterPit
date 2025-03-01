@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js').catch(console.error);
+        }
+
+        window.onload = function() {
+            window.location.href = "https://ee.kobotoolbox.org/x/XyfeWvDd"; // Change this URL to your desired destination
+        };
+    </script>
+</head>
+<body>
+    <p>If you are not redirected, <a href="https://ee.kobotoolbox.org/x/XyfeWvDd">click here</a>.</p>
+</body>
+</html>
