@@ -17,7 +17,7 @@ def getRow(csvFile: list[list[str]], rowNum: int) -> list[str]:
     return []
 
 
-def getColumn(csvFile: list[list[str]], columnNum: int) -> list[str]:
+def getColumnByIndex(csvFile: list[list[str]], columnNum: int) -> list[str]:
     column: list[str] = []
     for row in csvFile:
         for cellIndex, cell in enumerate(row):
@@ -26,5 +26,14 @@ def getColumn(csvFile: list[list[str]], columnNum: int) -> list[str]:
     return column
 
 
+def getColumnByHeader(csvFile: list[list[str]], headerName: str) -> list[str]:
+    columnIndex: int = 0
+    for headerIndex, header in enumerate(csvFile[0]):
+        if header == headerName:
+            columnIndex = headerIndex
+
+    return getColumnByIndex(csvFile, columnIndex)
+
+
 if __name__ == "__main__":
-    openCSV("parsing/VScouter_Pit_Scouting.csv")  # Ensure the path is correct
+    openCSV("parsing/VScouter_Pit_Scouting.csv")
