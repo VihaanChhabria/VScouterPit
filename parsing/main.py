@@ -61,7 +61,7 @@ def getImageFromURL(url: str, teamNum: str):
             url,
             auth=HTTPBasicAuth(USERNAME, PASSWORD),
         )
-        with open(f"{teamNum}Robot.jpg", "wb") as file:
+        with open(f"data/robot_images/{teamNum}Robot.jpg", "wb") as file:
             file.write(response.content)
 
 
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     loadENV(".env")
     USERNAME = os.environ.get("USERNAME")
     PASSWORD = os.environ.get("PASSWORD")
-    data = openCSV("VScouter_Pit_Scouting.csv")
+    data = openCSV("data/pit_data/VScouter_Pit_Scouting.csv")
 
     picturesURLs = getColumnByHeader(data, "Take a picture of the team’s robot._URL")[
         1:
