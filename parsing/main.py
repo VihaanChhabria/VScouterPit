@@ -4,6 +4,8 @@ import os
 import csv_utils
 from PIL import Image  # type: ignore
 import io
+import csv
+import time
 
 
 def loadENV(filename: str):
@@ -65,6 +67,33 @@ def mergeImages(image1, image2):  # type: ignore
     return mergedImage
 
 
+def cleanData(data: list[list[str]]) -> list[list[str]]:
+    for i, header in enumerate(data[0]):  # data[0] is the header row
+        if header == "end":
+            data[0][i] = "submission time"
+        elif header == "Rate it:":
+            data[0][i] = "vibe rating"
+
+    data = csv_utils.deleteColumnByHeader(data, "start")
+    data = csv_utils.deleteColumnByHeader(data, "What are the vibes of the team?")
+    data = csv_utils.deleteColumnByHeader(data, "Take a picture of the team’s robot.")
+    data = csv_utils.deleteColumnByHeader(
+        data, "Take a picture of the team’s robot._URL"
+    )
+    data = csv_utils.deleteColumnByHeader(data, "_id")
+    data = csv_utils.deleteColumnByHeader(data, "_uuid")
+    data = csv_utils.deleteColumnByHeader(data, "_submission_time")
+    data = csv_utils.deleteColumnByHeader(data, "_validation_status")
+    data = csv_utils.deleteColumnByHeader(data, "_notes")
+    data = csv_utils.deleteColumnByHeader(data, "_status")
+    data = csv_utils.deleteColumnByHeader(data, "_submitted_by")
+    data = csv_utils.deleteColumnByHeader(data, "__version__")
+    data = csv_utils.deleteColumnByHeader(data, "_index")
+    data = csv_utils.deleteColumnByHeader(data, "_tags")
+
+    return data
+
+
 def main():
     loadENV(".env")
 
@@ -83,6 +112,7 @@ def main():
     )[1:]
 
     doneTeamNums: list[str] = []
+    robotPicPaths: list[str] = ["robot images"]
     for pictureURL, teamNum in zip(picturesURLs, teamNums):
         if not teamNum in doneTeamNums:
             doneTeamNums.append(teamNum)
@@ -91,7 +121,17 @@ def main():
             image1 = Image.open(f"data/robot_images/{teamNum}Robot.jpg")  # type: ignore
             image2 = Image.open(io.BytesIO(getImageFromURL(pictureURL)))  # type: ignore
             mergeImages(image1, image2).save(f"data/robot_images/{teamNum}Robot.jpg")  # type: ignore
+        robotPicPaths.append(f"{os.getcwd()}\\data\\robot_images\\{teamNum}Robot.jpg")
 
+    data = cleanData(data)
+    data = csv_utils.addColumn(data, robotPicPaths)
+    
+    current_time = time.strftime("%Y%m%d-%H%M%S")
+    output_filename = f"data/output_data/VScouter_Pit_Data_Parsed_{current_time}.csv"
+    with open(output_filename, mode="w", newline="") as file:
+        writer = csv.writer(file)  # Create a CSV writer
+        writer.writerows(data)      # Write all rows at once
+    
 
 if __name__ == "__main__":
     main()

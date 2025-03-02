@@ -48,6 +48,22 @@ def getColumnByHeader(csvFile: list[list[str]], headerName: str) -> list[str]:
     return getColumnByIndex(csvFile, columnIndex)
 
 
+def deleteColumnByHeader(csvFile: list[list[str]], headerName: str) -> list[list[str]]:
+    columnIndex = -1
+    for headerIndex, header in enumerate(csvFile[0]):
+        if header == headerName:
+            columnIndex = headerIndex
+            break
+
+    if columnIndex == -1:
+        return csvFile
+
+    for row in csvFile:
+        del row[columnIndex]
+
+    return csvFile
+
+
 def addColumn(currentData: list[list[str]], newColumn: list[str]):
     for rowIndex, row in enumerate(currentData):
         row.append(newColumn[rowIndex])
