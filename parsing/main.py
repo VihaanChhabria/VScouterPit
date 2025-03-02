@@ -7,11 +7,23 @@ import os
 def loadENV(filename: str):
     with open(filename) as f:
         for line in f:
-            if line.strip() and not line.startswith(
-                "#"
-            ):  # Ignore empty lines and comments
+            if line.strip() and not line.startswith("#"):
                 key, value = line.strip().split("=", 1)
-                os.environ[key] = value  # Set as environment variable
+                os.environ[key] = value
+
+
+def envCheck():
+    if not os.path.exists(".env"):
+        with open(".env", "w") as f:
+            for key, value in {
+                "USERNAME": "your_username_here",
+                "PASSWORD": "your_password_here",
+            }.items():
+                f.write(f"{key}={value}\n")
+        print(
+            "Created a .env file as it was not detected. Please update it with your credentials."
+        )
+        exit()
 
 
 def openCSV(path: str) -> list[list[str]]:
@@ -66,9 +78,12 @@ def getImageFromURL(url: str, teamNum: str):
 
 
 if __name__ == "__main__":
+    envCheck()
     loadENV(".env")
+
     USERNAME = os.environ.get("USERNAME")
     PASSWORD = os.environ.get("PASSWORD")
+
     data = openCSV("data/pit_data/VScouter_Pit_Scouting.csv")
 
     picturesURLs = getColumnByHeader(data, "Take a picture of the team’s robot._URL")[
