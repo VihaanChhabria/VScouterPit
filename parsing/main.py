@@ -2,6 +2,8 @@ import requests
 from requests.auth import HTTPBasicAuth
 import os
 import csv_utils
+from PIL import Image  # type: ignore
+import io
 
 
 def loadENV(filename: str):
@@ -24,15 +26,45 @@ def loadENV(filename: str):
                 os.environ[key] = value
 
 
-def getImageFromURL(url: str, teamNum: str):
+def getImageFromURLAndDownload(url: str, teamNum: str):
     if USERNAME and PASSWORD:
 
         response: requests.Response = requests.get(
             url,
             auth=HTTPBasicAuth(USERNAME, PASSWORD),
         )
-        with open(f"data/robot_images/{teamNum}Robot.jpg", "wb") as file:
-            file.write(response.content)
+        downloadData(f"data/robot_images/{teamNum}Robot.jpg", response.content)
+
+
+def getImageFromURL(url: str) -> bytes:
+    if USERNAME and PASSWORD:
+
+        response: requests.Response = requests.get(
+            url,
+            auth=HTTPBasicAuth(USERNAME, PASSWORD),
+        )
+        return response.content
+    return bytes()
+
+
+def downloadData(path: str, data: bytes):
+    with open(path, "wb") as file:
+        file.write(data)
+
+
+def mergeImages(image1, image2):  # type: ignore
+    width1, height1 = image1.size  # type: ignore
+    width2, height2 = image2.size  # type: ignore
+
+    mergedWidth = width1 + width2  # type: ignore
+    mergedHeight = max(height1, height2)  # type: ignore
+
+    mergedImage = Image.new("RGB", (mergedWidth, mergedHeight))  # type: ignore
+
+    mergedImage.paste(image1, (0, 0))  # type: ignore
+    mergedImage.paste(image2, (width1, 0))  # type: ignore
+
+    return mergedImage
 
 
 if __name__ == "__main__":
@@ -50,5 +82,12 @@ if __name__ == "__main__":
         data, "What is the team you are pit scouting?"
     )[1:]
 
+    doneTeamNums: list[str] = []
     for pictureURL, teamNum in zip(picturesURLs, teamNums):
-        getImageFromURL(pictureURL, teamNum)
+        if not teamNum in doneTeamNums:
+            doneTeamNums.append(teamNum)
+            getImageFromURLAndDownload(pictureURL, teamNum)
+        else:
+            image1 = Image.open(f"data/robot_images/{teamNum}Robot.jpg")  # type: ignore
+            image2 = Image.open(io.BytesIO(getImageFromURL(pictureURL)))  # type: ignore
+            mergeImages(image1, image2).save(f"data/robot_images/{teamNum}Robot.jpg")  # type: ignore
