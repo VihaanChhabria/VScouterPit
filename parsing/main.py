@@ -35,6 +35,18 @@ def openCSV(path: str) -> list[list[str]]:
         return formattedCSV
 
 
+def getAllData() -> list[list[str]]:
+    fullPitData: list[list[str]] = []
+    for pitDataFileNameIndex, pitDataFileName in enumerate(
+        os.listdir("data/pit_data/")
+    ):
+        if pitDataFileNameIndex == 0:
+            fullPitData += openCSV("data/pit_data/" + pitDataFileName)
+        else:
+            fullPitData += openCSV("data/pit_data/" + pitDataFileName)[1:]
+    return fullPitData
+
+
 def getRow(csvFile: list[list[str]], rowNum: int) -> list[str]:
     for rowIndex, row in enumerate(csvFile):
         if rowIndex == rowNum:
@@ -78,13 +90,15 @@ def getImageFromURL(url: str, teamNum: str):
 
 
 if __name__ == "__main__":
+    getAllData()
+
     envCheck()
     loadENV(".env")
 
     USERNAME = os.environ.get("USERNAME")
     PASSWORD = os.environ.get("PASSWORD")
 
-    data = openCSV("data/pit_data/VScouter_Pit_Scouting.csv")
+    data = getAllData()
 
     picturesURLs = getColumnByHeader(data, "Take a picture of the team’s robot._URL")[
         1:
