@@ -28,7 +28,6 @@ def loadENV(filename: str):
 
 def getImageFromURLAndDownload(url: str, teamNum: str):
     if USERNAME and PASSWORD:
-
         response: requests.Response = requests.get(
             url,
             auth=HTTPBasicAuth(USERNAME, PASSWORD),
@@ -38,7 +37,6 @@ def getImageFromURLAndDownload(url: str, teamNum: str):
 
 def getImageFromURL(url: str) -> bytes:
     if USERNAME and PASSWORD:
-
         response: requests.Response = requests.get(
             url,
             auth=HTTPBasicAuth(USERNAME, PASSWORD),
@@ -67,10 +65,12 @@ def mergeImages(image1, image2):  # type: ignore
     return mergedImage
 
 
-if __name__ == "__main__":
+def main():
     loadENV(".env")
 
+    global USERNAME
     USERNAME = os.environ.get("USERNAME")
+    global PASSWORD
     PASSWORD = os.environ.get("PASSWORD")
 
     data = csv_utils.getAllData()
@@ -91,3 +91,7 @@ if __name__ == "__main__":
             image1 = Image.open(f"data/robot_images/{teamNum}Robot.jpg")  # type: ignore
             image2 = Image.open(io.BytesIO(getImageFromURL(pictureURL)))  # type: ignore
             mergeImages(image1, image2).save(f"data/robot_images/{teamNum}Robot.jpg")  # type: ignore
+
+
+if __name__ == "__main__":
+    main()
