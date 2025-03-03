@@ -68,7 +68,7 @@ def mergeImages(image1, image2):  # type: ignore
 
 
 def cleanData(data: list[list[str]]) -> list[list[str]]:
-    for i, header in enumerate(data[0]):  # data[0] is the header row
+    for i, header in enumerate(data[0]):
         if header == "end":
             data[0][i] = "submission time"
         elif header == "Rate it:":
