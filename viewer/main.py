@@ -71,7 +71,7 @@ def display_data(team_number: int):
 
 
 root = tk.Tk()
-root.title("FRC Scouting Data Viewer")
+root.title("VScouter Pit Data Viewer")
 root.geometry("800x600")
 root.resizable(False, False)
 
